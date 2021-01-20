@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="org.standard.project.MagazineMapper">
+	<select id="writeMagazine" resultType="MagazineVO">
+		INSERT INTO magazine(m_Title, m_Content, m_Date, m_Thumb, m_Img, m_Hit, m_Like) VALUES(#{m_Title}, #{m_Content}, CURDATE(), #{m_Thumb}, #{m_Img}, 0, 0);
+	</select>
+	<!-- 어드민 매거진 뷰 리스트 불러오기 -->
+	<!-- 리스트로 전체를 보여줘야하기 때문에 img가 아닌 thumbnail을 가져옴 -->
+	<select id="adminMagazineViewList" resultType="MagazineVO">
+		SELECT m_Seq, m_Title, m_Content, m_Date, m_Thumb, m_Hit, m_Like FROM magazine
+	</select>
+	
+	<select id="searchMagazineViewList" parameterType="String" resultType="MagazineVO">
+		SELECT m_Seq, m_Title, m_Content, m_Date, m_Thumb, m_Hit, m_Like FROM magazine WHERE m_Title LIKE CONCAT('%',#{m_Title},'%')
+	</select>
+	<!-- 시퀀스로 매거진 상세보기 불러오기 -->
+	<!-- 본문내용이기 때문에 img를 가져옴 -->
+	<select id="selectMagazine" resultType="MagazineVO">
+		SELECT m_Seq, m_Title, m_Content, m_Date, m_Thumb, m_Img, m_Date, m_Hit, m_Like FROM magazine where m_Seq=#{m_Seq}
+	</select>
+	<select id="selectOneForModify" resultType="MagazineVO">
+		SELECT m_Title, m_Content, m_Img FROM magazine where m_Seq=#{m_Seq}
+	</select>
+	<select id="modifyMagazineWithoutImage" resultType="MagazineVO">
+		UPDATE magazine SET m_Title=#{m_Title}, m_Content=#{m_Content} where m_Seq=#{m_Seq}
+	</select>
+	<select id="modifyMagazineWithImage" resultType="MagazineVO">
+		UPDATE magazine SET m_Title=#{m_Title}, m_Content=#{m_Content}, m_Thumb=#{m_Thumb}, m_Img=#{m_Img} where m_Seq=#{m_Seq}
+	</select>
+	<select id="deleteMagazine" resultType="MagazineVO">
+		DELETE FROM magazine WHERE m_Seq=#{m_Seq};
+	</select>
+	<select id="hitIncrease" resultType="MagazineVO">
+		UPDATE magazine SET m_Hit=m_Hit + 1 WHERE m_Seq=#{m_Seq}
+	</select>
+	<!-- 좋아요 눌렀는지 안눌렀는지 확인하는 매퍼 -->
+	<select id="likecheck" resultType="String">
+		SELECT ml_Check From magazinelike WHERE m_Seq=#{m_Seq} and c_Id=#{c_Id}
+	</select>
+	<!-- 게시글 조회하면 해당 db에 좋아요 여부 생성 -->
+	<select id="makeLikeRow" resultType="MagazineLikeVO">
+		INSERT INTO magazinelike(m_Seq,c_Id,ml_Check) VALUES (#{m_Seq},#{c_Id},1)
+	</select>
+	<!-- 게시글 좋아요 수 가져오는 쿼리(ml_Check로 여부 확인) -->
+	<select id="getLikeCnt" resultType="_int">
+		SELECT m_Like FROM magazine WHERE m_Seq = #{m_Seq}
+		<!-- SELECT COUNT(*) FROM magazineLike WHERE m_Seq = #{m_Seq} AND ml_Check = 1  -->
+	</select>
+	<!-- 좋아요 누를 시 매거진 테이블의 좋아요 수 증가 -->
+	<select id="updateLikeCntPlus" resultType="MagazineVO">
+		UPDATE magazine SET m_Like = m_Like+1 WHERE m_Seq=#{m_Seq}
+	</select>
+	<!-- 좋아요 다시 누르면 매거진 테이블 좋아요 수 감소 -->
+	<select id="updateLikeCntMinus" resultType="MagazineVO">
+		UPDATE magazine SET m_Like = m_Like-1 WHERE m_Seq=#{m_Seq}
+	</select>
+	<!-- 좋아요 취소하면 ml_Check가 다시 0이 되어야함 -->
+	<select id="likeCheckInit" resultType="MagazineLikeVO">
+		UPDATE magazinelike SET ml_Check = 0 WHERE m_Seq=#{m_Seq} and c_Id=#{c_Id}
+	</select>
+	<!-- 취소했다가 다시 좋아요누르는 경우 magazineLike 테이블의 likeCheck를 1로 변경 -->
+	<select id="likeCheckPlus" resultType="MagazineLikeVO">
+		UPDATE magazinelike SET ml_Check = 1 WHERE m_Seq=#{m_Seq} and c_Id=#{c_Id}
+	</select>
+</mapper>

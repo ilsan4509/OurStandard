@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+   <typeAliases>
+   	  <!-- VO 클래스 위치 -->
+      <typeAlias alias="CustomerVO" type="org.standard.project.customer.CustomerVO"/>
+      <typeAlias alias="MagazineVO" type="org.standard.project.magazine.MagazineVO"/>
+      <typeAlias alias="ProductParentVO" type="org.standard.project.product.ProductParentVO"/>
+      <typeAlias alias="ProductChildVO" type="org.standard.project.product.ProductChildVO"/>
+      <typeAlias alias="BrandDBVO" type="org.standard.project.brand.BrandDBVO"/>
+      <typeAlias alias="MagazineLikeVO" type="org.standard.project.magazine.MagazineLikeVO"/>
+      <typeAlias alias="ReviewVO" type="org.standard.project.review.ReviewVO"/>
+      <typeAlias alias="OrderHistoryVO" type="org.standard.project.order.OrderHistoryVO"/>
+      
+      <!-- <typeAlias alias="ReviewVO" type="org.standard.project.magazine.ReviewVO"/> -->
+   </typeAliases>
+   <environments default="development">
+      <environment id="development">
+         <transactionManager type="JDBC" />
+         <dataSource type="POOLED">
+            <property name="driver" value="org.mariadb.jdbc.Driver" />
+            <property name="url" value="jdbc:mysql://localhost:3306/standard" />
+            <property name="username" value="root" />
+            <property name="password" value="12345" />
+            <!-- 서버 DB 연결 때 주석 풀어야하는 부분 
+            <property name="url" value="jdbc:mariadb://localhost:3306/vinocturne" />
+            <property name="username" value="vinocturne" />
+            <property name="password" value="standard1@" /> -->
+         </dataSource>
+      </environment>
+   </environments>
+   <mappers>
+      <!-- <mapper resource="mapper위치" /> -->
+      <mapper resource="mappers/CustomerMapper.xml"/>
+      <mapper resource ="mappers/OrderHistoryMapper.xml"/>
+      <mapper resource ="mappers/MagazineMapper.xml"/>
+      <mapper resource ="mappers/ProductMapper.xml"/>
+      <mapper resource ="mappers/BrandDBMapper.xml"/>
+      <mapper resource ="mappers/WishListMapper.xml"/>
+      <mapper resource ="mappers/ReviewMapper.xml"/>
+   </mappers>
+   
+</configuration>

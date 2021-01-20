@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.standard.project.ReviewMapper">
+	<select id="listProductReview" parameterType = "String" resultType="ReviewVO">
+		SELECT * FROM review where parent_p_Id=#{pp_Id}
+	</select>
+	<select id="writeReview" resultType="ReviewVO">
+		INSERT INTO review (p_Id, r_Title, r_Writer, r_Date, r_Coment, parent_p_Id, pp_Name, r_ComentRe, brandId ) VALUES(#{p_Id}, #{r_Title}, #{r_Writer}, CURDATE(), #{r_Coment}, #{parent_p_Id}, #{pp_Name}, #{r_ComentRe}, #{brandId});
+	</select> 
+	<!-- 셀러 리뷰관리페이지에 들어갈 쿼리문 -->
+	<select id="reviewListForSeller" resultType="ReviewVO">
+		SELECT * FROM review where brandId=#{brandId}
+	</select>
+	<select id="selectOneReview" parameterType = "String" resultType="ReviewVO">
+		SELECT * FROM review where r_Seq=#{r_Seq}
+	</select>
+	<select id="modifyReviewReply" resultType="ReviewVO">
+		UPDATE review SET r_ComentRe=#{r_ComentRe} where r_Seq=#{r_Seq}
+	</select>
+	<select id="DelReviewReply" parameterType = "String" resultType="ReviewVO">
+		UPDATE review SET r_ComentRe = null WHERE r_Seq = #{r_Seq};
+	</select>
+</mapper>

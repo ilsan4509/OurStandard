@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.standard.project.ProductMapper">
+
+	<select id="listProductParent" resultType="ProductParentVO">
+		SELECT * FROM productparent WHERE pp_Brand= '${brandId}'
+	</select>
+	
+	<select id="registProductParent" resultType="ProductParentVO">
+		INSERT INTO productparent(pp_Name, parent_p_Id, pp_Category1, pp_Category2, pp_thumb, pp_image, pp_Brand, pp_Price) VALUES(#{pp_Name}, #{parent_p_Id}, #{pp_Category1}, #{pp_Category2}, #{pp_thumb}, #{pp_image}, #{pp_Brand}, #{pp_Price});
+	</select>
+	
+	<select id="cntBrandProductParent" resultType="_int">
+		SELECT MAX(pp_Num) FROM productparent
+	</select>
+	
+	<select id="deleteParentProduct" resultType="ProductParentVO">
+		DELETE FROM productparent WHERE parent_p_Id=#{parent_p_Id}
+	</select>
+	
+	<select id="selectParentProduct" resultType="ProductParentVO">
+		SELECT * FROM productparent where parent_p_Id=#{parent_p_Id}
+	</select>
+	
+	<select id="modifyParentProductWithoutImage" resultType="ProductParentVO">
+		UPDATE productparent SET pp_Name=#{pp_Name}, pp_Category1=#{pp_Category1}, pp_Category2=#{pp_Category2}, pp_Price=#{pp_Price} where parent_p_Id=#{parent_p_Id}
+	</select>
+	<select id="modifyParentProductWithImage" resultType="ProductParentVO">
+		UPDATE productparent SET pp_Name=#{pp_Name}, pp_Category1=#{pp_Category1}, pp_Category2=#{pp_Category2}, pp_Price=#{pp_Price}, pp_thumb=#{pp_thumb}, pp_image=#{pp_image} where parent_p_Id=#{parent_p_Id}
+	</select>
+	
+	<select id="listProductChild" parameterType = "String" resultType="ProductChildVO">
+		SELECT * FROM product WHERE parent_p_Id= #{parent_p_Id}
+	</select>
+	
+	<select id="showAllProductList" resultType = "ProductParentVO">
+		SELECT * FROM productparent; 
+	</select>
+	
+	<select id="registProductChild" resultType="ProductChildVO">
+		INSERT INTO product(parent_p_Id, p_Id, p_Brand, p_Color, p_Size, p_Stack) VALUES(#{parent_p_Id}, #{p_Id}, #{p_Brand}, #{p_Color}, #{p_Size}, #{p_Stack});
+	</select>
+	
+	<select id="deleteChildProduct" resultType="ProductChildVO">
+		DELETE FROM product WHERE p_Id=#{p_Id}
+	</select>
+	
+	<select id="modifyChildProduct" resultType="ProductChildVO">
+		UPDATE product SET p_Color=#{p_Color}, p_Size=#{p_Size}, p_Stack=#{p_Stack} where p_Id=#{p_Id}
+	</select>
+	
+	<select id="showWomanProductList" resultType="ProductParentVO">
+		SELECT * FROM productparent WHERE pp_Category1='woman'
+	</select>
+	
+	<select id="searchWomanProductList" parameterType="String" resultType="ProductParentVO">
+		SELECT * FROM productparent WHERE pp_Category1='woman' AND pp_Name LIKE CONCAT('%',#{pp_Name},'%')
+	</select>
+	
+	<select id="showManProductList" resultType="ProductParentVO">
+		SELECT * FROM productparent WHERE pp_Category1='man'
+	</select>
+	
+	<select id="searchManProductList" parameterType="String" resultType="ProductParentVO">
+		SELECT * FROM productparent WHERE pp_Category1='man' AND pp_Name LIKE CONCAT('%',#{pp_Name},'%')
+	</select>
+	
+	<select id="showCategoryList" resultType="ProductParentVO">
+		SELECT * FROM productparent WHERE pp_Category1=#{pp_Category1} AND pp_Category2=#{pp_Category2}
+	</select>
+	
+	<select id="showSearchCategoryList" resultType="ProductParentVO">
+		SELECT * FROM productparent WHERE pp_Category1=#{pp_Category1} AND pp_Category2=#{pp_Category2} AND pp_Name LIKE CONCAT('%',#{pp_Name},'%')
+	</select>
+	
+	<select id="purchase">
+		UPDATE product SET p_Stack = p_Stack-#{w_Quantity} WHERE p_Id =#{p_Id}
+	</select>
+	<select id="checkStack" parameterType = "String" resultType="_int">
+		select p_Stack from product where p_Id=#{string}
+	</select>
+	<!-- 옵션 넘겨주기 위한 해당 상품의 Color option 중복 제외값 가져오기 (color)-->
+	<select id="optionColor" resultType="String">
+		select distinct p_Color from product WHERE parent_p_Id=#{parent_p_Id}
+	</select>
+	<!-- 옵션 넘겨주기 위한 해당 상품의 Size option 중복 제외값 가져오기 (color)-->
+	<select id="optionSize" resultType="String">
+		select distinct p_Size from product WHERE parent_p_Id=#{parent_p_Id}
+	</select>
+	<!-- 재고확인용 매퍼 -->
+	<select id="stockCheck" resultType="ProductChildVO">
+		select p_Id, p_Stack from product WHERE parent_p_Id=#{parent_p_Id}
+	</select>
+</mapper>
